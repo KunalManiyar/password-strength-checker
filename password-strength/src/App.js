@@ -3,6 +3,8 @@ import "./App.css";
 import { useEffect, useState } from "react";
 
 function App() {
+  const [passLen, setPassLen] = useState();
+  const [passGen, setPassGen] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passResult, setPassResult] = useState({
@@ -40,6 +42,37 @@ function App() {
 
   const escapeRegExp = (string) =>
     string.replace(/[-.*+?^${}()|[\]\\]/g, "\\$&");
+
+  function password_generator(passLen) {
+    var length = passLen ? passLen : 10;
+    var string = "abcdefghijklmnopqrstuvwxyz"; //to upper
+    var numeric = "0123456789";
+    var punctuation = "!@#$%^&*";
+    var password = "";
+    var character = "";
+    var entity1 = "",
+      entity2 = "",
+      entity3 = "",
+      hold = "";
+    while (password.length < length) {
+      entity1 = Math.ceil(string.length * Math.random() * Math.random());
+      entity2 = Math.ceil(numeric.length * Math.random() * Math.random());
+      entity3 = Math.ceil(punctuation.length * Math.random() * Math.random());
+      hold = string.charAt(entity1);
+      hold = password.length % 2 === 0 ? hold.toUpperCase() : hold;
+      character += hold;
+      character += numeric.charAt(entity2);
+      character += punctuation.charAt(entity3);
+      password = character;
+    }
+    password = password
+      .split("")
+      .sort(function () {
+        return 0.5 - Math.random();
+      })
+      .join("");
+    setPassGen(password.substr(0, length));
+  }
 
   function passwordStrength(
     password,
@@ -122,10 +155,10 @@ function App() {
       <div className="result">
         <h1>Result</h1>
         <hr />
-        <div className="result-inner">
+        {/* <div className="result-inner">
           <h3>ID:</h3>
           <h3>{passResult.id}</h3>
-        </div>
+        </div> */}
         <div className="result-inner">
           <h3>Strength Value:</h3>
           <h3>{passResult.value}</h3>
@@ -138,6 +171,27 @@ function App() {
           <h3>Contains:</h3>
           <h3>{passResult.contains.join(" ")}</h3>
         </div>
+      </div>
+      <h1>Random Password Generator</h1>
+      <div className="randomPass">
+        <div>
+          <input
+            type="text"
+            className="passLen"
+            value={passLen}
+            onChange={(e) => setPassLen(e.target.value)}
+            placeholder="Enter password length"
+          />
+          <button
+            type="submit"
+            onClick={() => password_generator(passLen)}
+            className="passSubmit"
+          >
+            Submit
+          </button>
+        </div>
+
+        <h3>{`Password Generated : ${passGen}`}</h3>
       </div>
     </div>
   );
